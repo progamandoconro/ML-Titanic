@@ -1,11 +1,12 @@
+
 setwd("~/PycharmProjects/titanic")
 
 
 library(caret)
 library(randomForest)
 library(MLmetrics)
-library(e1071)
-library (keras)
+library(mlbench)
+
 
 
 normalize <- function(x) { 
@@ -68,6 +69,23 @@ rand <- sample(1:nrow(x), nrow(x))
 # train is our training sample.
 train = x[rand[1:nrow(x)], ]
 
+py_config
+use_python("/home/ro/anaconda3/envs/r-tensorflow/bin/python")
+library(reticulate)
+
+k = import("sklearn.ensemble")
+
+clf = k$RandomForestClassifier(n_jobs=10)
+clf = k$RandomForestClassifier(n_jobs=as.integer(10),
+                             random_state=as.integer(0), 
+                             n_estimators=as.integer(101)) 
+# fit the model
+clf.fit = clf$fit(X = train[,-1], y= as.factor(train[,1]))
+clf.decision = clf$decision_path(train[,-1])
+
+
+    conda_install ("/home/ro/anaconda3/envs/r-tensorflow/bin/python","sklearn")
+
 # Create a holdout set for evaluating model performance.
 # Note: cross-validation is even better than a single holdout sample.
 
@@ -76,8 +94,7 @@ train = x[rand[1:nrow(x)], ]
 # Review the outcome variable distribution.CLASIFICACIOON
 table(Y_train, useNA = "ifany")
 
-# Set the seed for reproducibility.
-set.seed(1)
+
 
 RF<-randomForest(as.factor(train$target)~.,
                  data = train[,-1],importance=TRUE,proximity=T,ntree=500)
@@ -155,6 +172,36 @@ submi<-data.frame(PassengerId,Survived)
 View(submi)
 
 write.csv(submi,"Submission.csv",row.names = FALSE)
+
+
+
+
+
+str(train)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
