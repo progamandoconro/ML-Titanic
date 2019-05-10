@@ -23,7 +23,7 @@ t <- read.csv("train.csv")
 target <- t$Survived
 
 colnames(t)
-exp<- t[,c(3,5:8,10:12)]
+exp<- t[,c(3,5:12)]
 colnames(exp)
 
 x<- data.frame(target,exp)
@@ -54,6 +54,21 @@ x$Cabin<-ifelse(x$Cabin=="A",1,ifelse(x$Cabin=="B",
                                                                         6,ifelse(x$Cabin=="G",
                                                                                  7,ifelse(x$Cabin=="T",8,9))))))))
 
+
+TT<- lapply(t$Ticket, substring, 1, 1)
+
+
+x$Ticket<-unlist(TT)
+x$Ticket<-ifelse(x$Ticket=="A",10,
+                 ifelse(x$Ticket=="C",11,
+                        ifelse(x$Ticket=="F",12,
+                              ifelse(x$Ticket=="L",13,
+                                     ifelse(x$Ticket=="P",14,
+                                            ifelse(x$Ticket=="S",15,
+                                                   ifelse(x$Ticket=="W",16,x$Ticket)))) )))
+
+table(x$Ticket)
+x$Ticket<-as.numeric(x$Ticket)
 x<-na.aggregate(x)
 
 str(x)
@@ -175,6 +190,20 @@ x$Cabin<-ifelse(x$Cabin=="A",1,ifelse(x$Cabin=="B",
 
 
 
+
+TT<- lapply(test$Ticket, substring, 1, 1)
+
+
+x$Ticket<-unlist(TT)
+x$Ticket<-ifelse(x$Ticket=="A",10,
+                 ifelse(x$Ticket=="C",11,
+                        ifelse(x$Ticket=="F",12,
+                               ifelse(x$Ticket=="L",13,
+                                      ifelse(x$Ticket=="P",14,
+                                             ifelse(x$Ticket=="S",15,
+                                                    ifelse(x$Ticket=="W",16,x$Ticket)))) )))
+x$Ticket<-as.numeric(x$Ticket)
+
 x<-na.aggregate(x)
 
 str(x)
@@ -207,5 +236,8 @@ submi<-data.frame(PassengerId,Survived)
 
 View(submi)
 
-write.csv(submi,"SubmissionS.csv",row.names = FALSE)
+write.csv(submi,"SubmissionS2.csv",row.names = FALSE)
+
+
+
 
