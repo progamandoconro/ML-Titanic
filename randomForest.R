@@ -1,11 +1,14 @@
+
 setwd("~/PycharmProjects/titanic")
 
 
 library(caret)
 library(randomForest)
 library(MLmetrics)
-library(e1071)
-library (keras)
+library(mlbench)
+library(zoo)
+library(ROSE)
+
 
 
 normalize <- function(x) { 
@@ -58,8 +61,8 @@ x<-lapply(x, normalize)
 
 x<-as.data.frame(x)
 
-TT<- lapply(t$Ticket, substring, 1, 1)
-x$Ticket<-as.factor(unlist(TT))
+#TT<- lapply(t$Ticket, substring, 1, 1)
+#x$Ticket<-as.factor(unlist(TT))
 
 set.seed(7)
 
@@ -67,24 +70,35 @@ rand <- sample(1:nrow(x), nrow(x))
 
 # train is our training sample.
 train = x[rand[1:nrow(x)], ]
-
-# Create a holdout set for evaluating model performance.
-# Note: cross-validation is even better than a single holdout sample.
-
-#cv = x[601:nrow(x), ]
-
-# Review the outcome variable distribution.CLASIFICACIOON
-table(Y_train, useNA = "ifany")
-
-# Set the seed for reproducibility.
-set.seed(1)
-
-RF<-randomForest(as.factor(train$target)~.,
-                 data = train[,-1],importance=TRUE,proximity=T,ntree=500)
+cv=x[rand[601:nrow(x)],]
 
 
-RF
+py_config
+use_python("/home/ro/anaconda3/envs/r-tensorflow/bin/python")
+library(reticulate)
 
+k = import("sklearn.ensemble")
+
+rf = k$RandomForestClassifier()
+
+
+apply(train, 2, function(x) any(is.na(x)))
+
+
+
+rf$fit (train[,-1], train[,1])
+
+k$RandomForestClassifier(bootstrap=TRUE, class_weight=NULL, criterion='gini',
+                         max_depth=NULL, max_features='auto', max_leaf_nodes=NULL,
+                         min_impurity_split=1e-07, min_samples_leaf=1,
+                         min_samples_split=2, min_weight_fraction_leaf=0.0,
+                         n_estimators=10, n_jobs=1, oob_score=FALSE, random_state=NULL,
+                         verbose=0, warm_start=FALSE)
+y_pred = rf$predict(cv[,-1])
+
+roc=roc.curve(y_pred,cv[,1])
+  
+roc$auc
 
 
 
@@ -136,8 +150,8 @@ x<-lapply(x, normalize)
 
 x<-as.data.frame(x)
 
-TT<- lapply(test$Ticket, substring, 1, 1)
-x$Ticket<-as.factor(unlist(TT))
+#TT<- lapply(test$Ticket, substring, 1, 1)
+#x$Ticket<-as.factor(unlist(TT))
 
 
 str(x)
@@ -147,17 +161,14 @@ View(x)
 xtest <- rbind(train[1,-1 ] , x)
 xtest <- xtest[-1,]
 
-Survived<-predict(RF,xtest)
+Survived<-rf$predict(xtest)
 PassengerId<-test$PassengerId
 
 submi<-data.frame(PassengerId,Survived)
 
 View(submi)
 
-write.csv(submi,"Submission.csv",row.names = FALSE)
-
-
-
+write.csv(submi,"Submission4.csv",row.names = FALSE)
 
 
 
