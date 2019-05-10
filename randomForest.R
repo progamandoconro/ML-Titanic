@@ -8,6 +8,7 @@ library(MLmetrics)
 library(mlbench)
 library(zoo)
 library(ROSE)
+library(reticulate)
 
 
 
@@ -73,9 +74,9 @@ train = x[rand[1:nrow(x)], ]
 cv=x[rand[601:nrow(x)],]
 
 
-py_config
-use_python("/home/ro/anaconda3/envs/r-tensorflow/bin/python")
-library(reticulate)
+#py_config
+#use_python("/home/ro/anaconda3/envs/r-tensorflow/bin/python")
+
 
 k = import("sklearn.ensemble")
 
@@ -100,6 +101,38 @@ roc=roc.curve(y_pred,cv[,1])
   
 roc$auc
 
+#############
+
+
+k2 = import("sklearn.ensemble")
+
+rf2 = k2$RandomForestClassifier()
+
+
+rf2$fit (train[,-1], train[,1])
+
+k2$RandomForestClassifier(bootstrap=TRUE, class_weight=NULL, criterion='gini',
+                         max_depth=NULL, max_features='auto', max_leaf_nodes=NULL,
+                         min_impurity_split=1e-07, min_samples_leaf=1,
+                         min_samples_split=2, min_weight_fraction_leaf=0.0,
+                         n_estimators=10, n_jobs=1, oob_score=FALSE, random_state=NULL,
+                         verbose=0, warm_start=FALSE)
+y_pred = rf2$predict(cv[,-1])
+#######
+k3 = import("sklearn.ensemble")
+
+rf3 = k3$RandomForestClassifier()
+
+
+rf3$fit (train[,-1], train[,1])
+
+k3$RandomForestClassifier(bootstrap=TRUE, class_weight=NULL, criterion='gini',
+                          max_depth=NULL, max_features='auto', max_leaf_nodes=NULL,
+                          min_impurity_split=1e-07, min_samples_leaf=1,
+                          min_samples_split=2, min_weight_fraction_leaf=0.0,
+                          n_estimators=10, n_jobs=1, oob_score=FALSE, random_state=NULL,
+                          verbose=0, warm_start=FALSE)
+y_pred = rf3$predict(cv[,-1])
 
 
 ######################################################3
@@ -161,14 +194,18 @@ View(x)
 xtest <- rbind(train[1,-1 ] , x)
 xtest <- xtest[-1,]
 
-Survived<-rf$predict(xtest)
+Survived1<-rf$predict(xtest)
+Survived2<-rf2$predict(xtest)
+Survived3<-rf3$predict(xtest)
+
+Survived<- (Survived1+Survived2+Survived3)/3
+
+Survived<-ifelse(Survived<0.5,0,1)
 PassengerId<-test$PassengerId
 
 submi<-data.frame(PassengerId,Survived)
 
 View(submi)
 
-write.csv(submi,"Submission4.csv",row.names = FALSE)
-
-
+write.csv(submi,"SubmissionS.csv",row.names = FALSE)
 
