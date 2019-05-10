@@ -1,11 +1,13 @@
 
+
 setwd("~/PycharmProjects/titanic")
 
 
 library(caret)
 library(randomForest)
 library(MLmetrics)
-
+library(e1071)
+library (keras)
 
 
 normalize <- function(x) { 
@@ -79,6 +81,45 @@ RF<-randomForest(as.factor(train$target)~.,
 p<-predict(RF,cv[,-1])
 
 Accuracy(p,cv$target)
+
+########################### intentemos otros modelos que tengo a mano 
+
+set.seed(1)
+
+RF<-svm(as.factor(train$target)~.,data = train[,-1],
+        scale = TRUE,kernel="polynomial",type="C-classification",degree=3)
+
+p<-predict(RF,cv[,-1])
+
+Accuracy(p,cv$target)
+
+
+#################################################
+
+model <- keras_model_sequential()
+
+model %>%
+  layer_dense(units = ncol(train[,-1]), activation = 'relu',
+              input_shape = ncol(train[,-1]), ) %>%
+  layer_dropout(rate = 0.99) %>%
+  layer_dense(units = 10, activation = 'relu') %>%
+  layer_dropout(rate = 0.95) %>%
+  layer_dense(units = 1, activation = 'sigmoid')
+
+history <- model %>% compile(
+  loss = 'binary_crossentropy',
+  optimizer = optimizer_adam(lr=0.001),
+  metrics = c('accuracy')
+)
+
+model %>% fit(
+  as.matrix(train[,-1],dimname=NULL), train$target,
+  epochs =5,
+  batch_size = 20,
+  validation_split = 0.0
+)
+
+#####################################################
 
 #intentemos sacar mas informacion de la data
 
@@ -180,5 +221,10 @@ RF<-randomForest(as.factor(train$target)~.,
 p<-predict(RF,cv[,-1])
 
 Accuracy(p,cv$target)
+
+
+
+
+
 
 
