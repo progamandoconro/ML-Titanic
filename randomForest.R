@@ -12,6 +12,7 @@
   library(MASS)
   library(qdap)
   library(stringr)
+  library(e1071)
   
   
   
