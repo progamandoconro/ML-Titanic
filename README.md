@@ -1,6 +1,3 @@
-# ML-Titanic, kaggle.org Machine Learning competition
-
-
 # First approach:
 Random Forest algorithm to predict Titanic survivers:
 
