@@ -7,4 +7,4 @@ https://programandoconro.wordpress.com/2019/05/10/titanic-analisis-de-datos-y-ma
 
 https://programandoconro.wordpress.com/2019/05/21/ensamblaje-de-algoritmos-para-predecir-sobrevivientes-del-titanic-parte-ii/
 
-### Results: Best 8% results on competition ranking positions. 
+### Ranking: Best 8%  
