@@ -9,4 +9,4 @@ Ensemble of algorithms, please check:
 
 https://programandoconro.wordpress.com/2019/05/21/ensamblaje-de-algoritmos-para-predecir-sobrevivientes-del-titanic-parte-ii/
 
-# Top 8% in ranking 
+### Top 8% in competition ranking 
